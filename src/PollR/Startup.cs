@@ -2,6 +2,7 @@
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Routing;
+using PollR.Model;
 
 namespace PollR
 {
@@ -14,14 +15,20 @@ namespace PollR
             app.UseServices(services =>
             {
                 services.AddMvc();
+                services.AddSignalR();
+                services.AddSingleton<PollRepository>();
             });
+
+            app.UseSignalR();
+
+            app.UseFileServer();
 
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     null,
                     "{controller}/{action}",
-                    new { controller = "Home", action = "Index" });
+                    new { controller = "Vote", action = "Index" });
             });
         }
     }

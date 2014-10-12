@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Poll</title>
+    <script src="~/Scripts/jquery-2.0.3.min.js"></script>
+    <script src="~/Scripts/knockout-3.0.0.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.0.1.min.js"></script>
+    <script src="~/signalr/hubs" type="text/javascript"></script>
+    <script>
+        $(function () {
+            var viewModel;
+
+            //$.connection.hub.logging = true;
+            //var pollHub = $.connection.poll;
+            
+            //$.connection.hub.start().done(function () {
+            //    console.log('hub connection open');
+            //});
+
+            var currentPollAddress = encodeURI('@Url.Content("~/Vote/CurrentPoll/")');
+            $.getJSON(currentPollAddress, function (data) {
+                var model = data;
+
+                viewModel = {
+                    options: model.Options
+                };
+                ko.applyBindings(viewModel);
+            })
+        })
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Vote</h1>
+    </header>
+    <ul class="options" data-bind="foreach:options">
+        <li><a href="#" data-bind="text: $data"></a></li>
+    </ul>
+</body>
+</html>
