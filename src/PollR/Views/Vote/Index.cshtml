@@ -7,34 +7,85 @@
     <script src="~/Scripts/jquery.signalR-2.0.1.min.js"></script>
     <script src="~/signalr/hubs" type="text/javascript"></script>
     <script>
-        $(function () {
-            var viewModel;
+    $(function () {
+        function ViewModel() {
+            var vm = this;
 
-            //$.connection.hub.logging = true;
-            //var pollHub = $.connection.poll;
-            
-            //$.connection.hub.start().done(function () {
-            //    console.log('hub connection open');
-            //});
+            vm.options = ko.observableArray();
+            vm.currentOption = ko.observable();
 
-            var currentPollAddress = encodeURI('@Url.Content("~/Vote/CurrentPoll/")');
-            $.getJSON(currentPollAddress, function (data) {
-                var model = data;
+            var pollHub = $.connection.poll;
 
-                viewModel = {
-                    options: model.Options
+            vm.nominate = function () {
+                voteOrSubmit($('#nominate').val());
+            };
+
+            function OptionViewModel(name, votes) {
+                var ovm = this;
+
+                ovm.name = name;
+                ovm.votes = ko.observable(votes);
+
+                ovm.selected = ko.computed(function () {
+                    return ovm.name === vm.currentOption();
+                });
+
+                ovm.vote = function () {
+                    voteOrSubmit(ovm.name);
                 };
-                ko.applyBindings(viewModel);
-            })
-        })
+            }
+
+            function voteOrSubmit(option) {
+                pollHub.server.vote(option);
+                vm.currentOption(option);
+            }
+
+            pollHub.client.updateOption = function (name, votes) {
+                var existing = ko.utils.arrayFirst(vm.options(), function (option) {
+                    return option.name === name;
+                });
+                if (existing) {
+                    existing.votes(votes);
+                } else {
+                    var newOption = new OptionViewModel(name, votes);
+                    vm.options.push(newOption);
+                }
+            };
+
+            pollHub.client.reset = function () {
+                vm.options.removeAll();
+            };
+
+            $.connection.hub.start(function () {
+                pollHub.server.register();
+                $("#submit").removeAttr("disabled");
+            });
+        }
+
+        ko.applyBindings(new ViewModel());
+    });
     </script>
 </head>
 <body>
-    <header>
-        <h1>Vote</h1>
-    </header>
-    <ul class="options" data-bind="foreach:options">
-        <li><a href="#" data-bind="text: $data"></a></li>
-    </ul>
+    <h1>Poll</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Option</th>
+                <th>Votes</th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach: options">
+            <tr data-bind="click: vote, style: {backgroundColor: selected() ? 'yellow' : ''}">
+                <td data-bind="text: name"></td>
+                <td data-bind="text: votes"></td>
+            </tr>
+        </tbody>
+    </table>
+    <form data-bind="submit: nominate">
+        <input id="nominate" name="nominate" />
+        <input id="submit" type="submit" value="Nominate!" disabled="disabled" />
+    </form>
 </body>
+</html>
 </html>
