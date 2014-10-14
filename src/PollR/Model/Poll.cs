@@ -23,7 +23,7 @@ namespace PollR.Model
 
         public IEnumerable<KeyValuePair<string, int>> Options
         {
-            get { return options; }
+            get { return options.OrderByDescending(kv => kv.Key); }
         }
 
         public IEnumerable<KeyValuePair<string, int>> Vote(string option, string connectionId)

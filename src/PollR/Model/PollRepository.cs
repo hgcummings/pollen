@@ -9,8 +9,8 @@ namespace PollR.Model
         public PollRepository()
         {
             defaultPoll = new Poll();
-            defaultPoll.AddOption("Hit");
-            defaultPoll.AddOption("Miss");
+            defaultPoll.AddOption("S.H.I.T.");
+            defaultPoll.AddOption("MISS");
         }
 
         public Poll GetCurrentPoll()

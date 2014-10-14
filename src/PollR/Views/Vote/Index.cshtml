@@ -30,6 +30,13 @@
                     return ovm.name === vm.currentOption();
                 });
 
+                ovm.proportion = ko.computed(function () {
+                    var total = vm.options().reduce(function (a, b) {
+                        return a + b.votes() + 1;
+                    }, 0);
+                    return (100 * (ovm.votes() + 1) / total);
+                });
+
                 ovm.vote = function () {
                     voteOrSubmit(ovm.name);
                 };
@@ -65,27 +72,16 @@
         ko.applyBindings(new ViewModel());
     });
     </script>
+    <style>
+        html, body { height: 100%; margin: 0; padding: 0; text-align: center; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-weight: bold; background-color: black; color: white; font-size: 2em; }
+        ul.options { height: 100%; margin: 0; padding: 0; width: 100%; }
+        ul.options li { background-color: #00ff90; margin:0; padding: 0; width: 100%; display: inline-block; vertical-align: middle; }
+        ul.options li:nth-child(even) { background-color: #ff006e; }
+    </style>
 </head>
 <body>
-    <h1>Poll</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Option</th>
-                <th>Votes</th>
-            </tr>
-        </thead>
-        <tbody data-bind="foreach: options">
-            <tr data-bind="click: vote, style: {backgroundColor: selected() ? 'yellow' : ''}">
-                <td data-bind="text: name"></td>
-                <td data-bind="text: votes"></td>
-            </tr>
-        </tbody>
-    </table>
-    <form data-bind="submit: nominate">
-        <input id="nominate" name="nominate" />
-        <input id="submit" type="submit" value="Nominate!" disabled="disabled" />
-    </form>
+    <ul class="options" data-bind="foreach: options">
+        <li data-bind="click: vote, style: {height: proportion() + '%', fontSize: '10vw' }, text: name"></li>
+    </ul>
 </body>
-</html>
 </html>
