@@ -1,0 +1,51 @@
+﻿@model IEnumerable<PollR.Model.Snapshot>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Poll Admin</title>
+    <script src="~/Scripts/jquery-2.0.3.min.js"></script>
+    <script src="~/Scripts/knockout-3.0.0.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.0.1.min.js"></script>
+    <script src="~/signalr/hubs" type="text/javascript"></script>
+    <script>
+        
+    </script>
+    <style>
+        html, body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    @if (ViewBag.CurrentSession == null)
+    {
+        <form action="StartSession" method="post">
+            <h2>Start/load session:</h2>
+            <label for="sessionName">Session name:</label><input type="text" name="sessionName" id="sessionName" />
+            <input type="submit" value="Start" />
+        </form>
+}
+else
+{
+    <ul>
+        @foreach (var snapshot in Model)
+        {
+            <li>
+                <b>@snapshot.Name</b> <i>(@snapshot.Timestamp)</i>
+                <ul>
+                    @foreach (var option in snapshot.Votes)
+                    {
+                        <li>@option.Key: @option.Value</li>
+                    }
+                </ul>
+            </li>
+        }
+    </ul>
+    <form action="Snapshot" method="post">
+        <h2>Take poll:</h2>
+        <label for="snapshotName">Snapshot name:</label><input type="text" name="snapshotName" id="snapshotName" />
+        <input type="submit" value="Store" />
+    </form>
+}
+</body>
+</html>

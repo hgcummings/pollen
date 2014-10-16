@@ -61,6 +61,7 @@
 
             pollHub.client.reset = function () {
                 vm.options.removeAll();
+                pollHub.server.register();
             };
 
             $.connection.hub.start(function () {

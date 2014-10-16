@@ -31,7 +31,7 @@ namespace PollR.Model
             return CancelPreviousVote(connectionId).Concat(RecordNewVote(option, connectionId));
         }
 
-        private IEnumerable<KeyValuePair<string, int>> CancelPreviousVote(string connectionId)
+        public IEnumerable<KeyValuePair<string, int>> CancelPreviousVote(string connectionId)
         {
             string prevVote;
 

@@ -2,8 +2,9 @@
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using PollR.Model;
+using System.Threading.Tasks;
 
-namespace PollR.PollHub
+namespace PollR.Controllers
 {
     [HubName("poll")]
     public class PollHub : Hub
@@ -17,7 +18,7 @@ namespace PollR.PollHub
 
         public void Register()
         {
-            foreach (var option in this.pollRepository.GetCurrentPoll().Options)
+            foreach (var option in pollRepository.GetCurrentPoll().Options)
             {
                 Clients.Caller.UpdateOption(option.Key, option.Value);
             }
@@ -25,11 +26,18 @@ namespace PollR.PollHub
 
         public void Vote(string option)
         {
-            var updated = this.pollRepository.GetCurrentPoll().Vote(option, Context.ConnectionId);
+            var updated = pollRepository.GetCurrentPoll().Vote(option, Context.ConnectionId);
             foreach (var update in updated)
             {
                 Clients.All.UpdateOption(update.Key, update.Value);
             }
         }
+
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            pollRepository.GetCurrentPoll().CancelPreviousVote(Context.ConnectionId);
+            return base.OnDisconnected(stopCalled);
+        }
+
     }
 }
