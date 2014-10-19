@@ -14,17 +14,14 @@
             vm.options = ko.observableArray();
             vm.currentOption = ko.observable();
 
-            var pollHub = $.connection.poll;
-
-            vm.nominate = function () {
-                voteOrSubmit($('#nominate').val());
-            };
-
+            var pollHub = $.connection.pollHub;
+            
             function OptionViewModel(name, votes) {
                 var ovm = this;
 
                 ovm.name = name;
                 ovm.votes = ko.observable(votes);
+                ovm.selected = ko.observable(false);
 
                 ovm.selected = ko.computed(function () {
                     return ovm.name === vm.currentOption();
@@ -39,6 +36,7 @@
 
                 ovm.vote = function () {
                     voteOrSubmit(ovm.name);
+                    ovm.selected(true);
                 };
             }
 
@@ -76,13 +74,14 @@
     <style>
         html, body { height: 100%; margin: 0; padding: 0; text-align: center; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-weight: bold; background-color: black; color: white; font-size: 2em; }
         ul.options { height: 100%; margin: 0; padding: 0; width: 100%; }
-        ul.options li { background-color: #00ff90; margin:0; padding: 0; width: 100%; }
+        ul.options li { background-color: #00ff90; margin:0; padding: 0; width: 100%; position: relative; }
         ul.options li:nth-child(even) { background-color: #ff006e; }
+        ul.options li.selected:after { content: '✗'; position: absolute; right: 1em; }
     </style>
 </head>
 <body>
     <ul class="options" data-bind="foreach: options">
-        <li data-bind="click: vote, style: {height: proportion() + '%', fontSize: '10vw' }, text: name"></li>
+        <li data-bind="click: vote, style: {height: proportion() + '%', fontSize: '10vw' }, text: name, css: selected() ? 'selected' : ''"></li>
     </ul>
 </body>
 </html>

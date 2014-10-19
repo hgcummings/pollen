@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.AspNet.SignalR;
+﻿using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using PollR.Model;
 using System.Threading.Tasks;
 
 namespace PollR.Controllers
 {
-    [HubName("poll")]
+    [HubName("pollHub")]
     public class PollHub : Hub
     {
         private readonly PollRepository pollRepository;

@@ -17,16 +17,14 @@
     </style>
 </head>
 <body>
-    @if (ViewBag.CurrentSession == null)
-    {
-        <form action="StartSession" method="post">
-            <h2>Start/load session:</h2>
-            <label for="sessionName">Session name:</label><input type="text" name="sessionName" id="sessionName" />
-            <input type="submit" value="Start" />
-        </form>
-}
-else
+<form action="StartSession" method="post">
+    <h2>Start/load session:</h2>
+    <label for="sessionName">Session name: </label><input type="text" name="sessionName" id="sessionName" />
+    <input type="submit" value="Go" />
+</form>
+@if (ViewBag.CurrentSession != null)
 {
+    <h2>Results for session "@ViewBag.CurrentSession"</h2>
     <ul>
         @foreach (var snapshot in Model)
         {
@@ -43,7 +41,7 @@ else
     </ul>
     <form action="Snapshot" method="post">
         <h2>Take poll:</h2>
-        <label for="snapshotName">Snapshot name:</label><input type="text" name="snapshotName" id="snapshotName" />
+        <label for="snapshotName">Snapshot name: </label><input type="text" name="snapshotName" id="snapshotName" />
         <input type="submit" value="Store" />
     </form>
 }
