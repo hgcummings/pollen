@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
-using Microsoft.WindowsAzure;
 using System.Collections.Generic;
 using MhanoHarkness;
 using System.Text;
+using Microsoft.Framework.ConfigurationModel;
 
 namespace PollR.Model
 {
@@ -19,8 +19,8 @@ namespace PollR.Model
 
         public PollRepository()
         {
-            storageAccount = CloudStorageAccount.Parse(
-                CloudConfigurationManager.GetSetting("StorageConnectionString"));
+            IConfiguration configuration = new Configuration().AddEnvironmentVariables();
+            storageAccount = CloudStorageAccount.Parse(configuration.Get("Data:PollStorage:ConnectionString"));
             tableClient = storageAccount.CreateCloudTableClient();
             CloudTable table = tableClient.GetTableReference(TableName);
             table.CreateIfNotExists();
@@ -95,8 +95,8 @@ namespace PollR.Model
         private static Poll CreatePoll()
         {
             Poll newPoll = new Poll();
-            newPoll.AddOption("S.H.I.T.");
-            newPoll.AddOption("MISS");
+            newPoll.AddOption("YES");
+            newPoll.AddOption("NO");
             return newPoll;
         }
     }
