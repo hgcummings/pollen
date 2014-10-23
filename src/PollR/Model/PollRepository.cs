@@ -13,14 +13,11 @@ namespace PollR.Model
         private const string TableName = "PollSnapshots";
 
         private Poll currentPoll;
-        private String currentSession;
-        CloudStorageAccount storageAccount;
-        CloudTableClient tableClient;
+        private string currentSession;
+        private CloudTableClient tableClient;
 
-        public PollRepository()
+        public PollRepository(CloudStorageAccount storageAccount)
         {
-            IConfiguration configuration = new Configuration().AddEnvironmentVariables();
-            storageAccount = CloudStorageAccount.Parse(configuration.Get("Data:PollStorage:ConnectionString"));
             tableClient = storageAccount.CreateCloudTableClient();
             CloudTable table = tableClient.GetTableReference(TableName);
             table.CreateIfNotExists();
